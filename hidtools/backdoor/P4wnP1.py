@@ -45,7 +45,7 @@ class P4wnP1(cmd.Cmd):
 	"""
 
 	DEBUG = False
-
+	powerRun = False
 	CLIENT_TIMEOUT_MS = 1000 # if this value is reached, the client is regarded as disconnected
 
 	# message types from CLIENT (powershell) to server (python)
@@ -98,7 +98,7 @@ class P4wnP1(cmd.Cmd):
 		# register Listener for LinkLayer signals to upper layers (to receive LinkLayer connection events)
 		dispatcher.connect(self.signal_handler_transport_layer, sender="TransportLayerUp")
 		
-		self.client_connected_commands = ["ls", "pwd", "cd", "shell", "CreateProc", "interact", "download", "upload", "echotest", "GetClientProcs", "KillClient", "KillProc"]
+		self.client_connected_commands = ["ls", "pwd", "cd", "shell", "CreateProc", "interact", "download", "upload", "echotest", "GetClientProcs", "KillClient", "KillProc", "GotEM"]
 		self.setPrompt(False, False)
 		cmd.Cmd.__init__(self)
 		
@@ -216,10 +216,22 @@ Use "help FireStage1" to get more details.
 		#print "Client connect state: {0}".format(state)
 		if state:
 			print "\nTarget connected through HID covert channel\n"
+			if powerRun:
+			print "\nPreparing to download and run. A PowerShell will be ready to use once complete." 
+			AutoRun()
+			
 		else:
 			print "\nTarget disconnected"
 		self.setPrompt(state)
-	
+	# Auto Run an executable file -- g0n3b4d
+	def AutoRun(self):
+		rundir = os.path.dirname(sys.argv[0])
+	    basedir = os.path.abspath(rundir) +  "/"
+		
+		executable = self.config["PATH_AUTORUN_EXE"]
+		
+		print "Example rundir {0} , basedir {1} , Executable {2}".format(rundir, basedir, executable)
+		
 	def onClientProcessExitted(self, payload):
 		# fetch proc id
 		proc_id = struct.unpack("!I", payload)[0]
@@ -1048,7 +1060,16 @@ Use "help FireStage1" to get more details.
 		
 	def do_cd(self, line):
 		self.client_call_FS_command("cd", line)			
+	
+	def do_GotEM(self, line):
+		'''
+		This is wurr you attt doggggggggggg.
+		;)
+		'''
+		powerRun = True
+		do_FireStage1()
 
+		
 	@staticmethod
 	def askYesNo(default_yes = False):
 		given = ""
