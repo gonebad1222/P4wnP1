@@ -98,7 +98,7 @@ class P4wnP1(cmd.Cmd):
 		# register Listener for LinkLayer signals to upper layers (to receive LinkLayer connection events)
 		dispatcher.connect(self.signal_handler_transport_layer, sender="TransportLayerUp")
 		
-		self.client_connected_commands = ["ls", "pwd", "cd", "shell", "CreateProc", "interact", "download", "upload", "echotest", "GetClientProcs", "KillClient", "KillProc", "GotEM"]
+		self.client_connected_commands = ["ls", "pwd", "cd", "shell", "CreateProc", "interact", "download", "upload", "echotest", "GetClientProcs", "KillClient", "KillProc"]
 		self.setPrompt(False, False)
 		cmd.Cmd.__init__(self)
 		
